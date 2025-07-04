@@ -1,14 +1,27 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Menu, X, User, LogOut, Shield } from 'lucide-react';
 
-const Navigation = ({ onNavigate }: { onNavigate: (page: string) => void }) => {
+interface User {
+  name: string;
+  role: 'admin' | 'employee';
+  empId?: string;
+}
+
+interface NavigationProps {
+  onNavigate: (page: string) => void;
+  user?: User | null;
+  onLogout?: () => void;
+}
+
+const Navigation = ({ onNavigate, user, onLogout }: NavigationProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
     { name: 'Home', id: 'home' },
-    { name: 'Dashboard', id: 'dashboard' },
+    { name: user?.role === 'admin' ? 'Admin Dashboard' : 'Dashboard', id: 'dashboard' },
     { name: 'About', id: 'about' },
     { name: 'Contact', id: 'contact' }
   ];
@@ -35,6 +48,37 @@ const Navigation = ({ onNavigate }: { onNavigate: (page: string) => void }) => {
                 {item.name}
               </button>
             ))}
+
+            {/* User Info & Logout */}
+            {user && (
+              <div className="flex items-center gap-4 ml-4 pl-4 border-l border-white/10">
+                <div className="flex items-center gap-2">
+                  {user.role === 'admin' ? (
+                    <Shield className="w-4 h-4 text-keeper-purple" />
+                  ) : (
+                    <User className="w-4 h-4 text-keeper-blue" />
+                  )}
+                  <span className="text-sm font-medium">{user.name}</span>
+                  <Badge 
+                    className={
+                      user.role === 'admin' 
+                        ? 'bg-keeper-purple/20 text-keeper-purple border-keeper-purple/30' 
+                        : 'bg-keeper-blue/20 text-keeper-blue border-keeper-blue/30'
+                    }
+                  >
+                    {user.role}
+                  </Badge>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onLogout}
+                  className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -66,6 +110,39 @@ const Navigation = ({ onNavigate }: { onNavigate: (page: string) => void }) => {
                   {item.name}
                 </button>
               ))}
+              
+              {/* Mobile User Info & Logout */}
+              {user && (
+                <div className="border-t border-white/10 pt-3 mt-3">
+                  <div className="flex items-center gap-2 px-3 py-2">
+                    {user.role === 'admin' ? (
+                      <Shield className="w-4 h-4 text-keeper-purple" />
+                    ) : (
+                      <User className="w-4 h-4 text-keeper-blue" />
+                    )}
+                    <span className="text-sm font-medium">{user.name}</span>
+                    <Badge 
+                      className={
+                        user.role === 'admin' 
+                          ? 'bg-keeper-purple/20 text-keeper-purple border-keeper-purple/30' 
+                          : 'bg-keeper-blue/20 text-keeper-blue border-keeper-blue/30'
+                      }
+                    >
+                      {user.role}
+                    </Badge>
+                  </div>
+                  <button
+                    onClick={() => {
+                      onLogout?.();
+                      setIsOpen(false);
+                    }}
+                    className="flex items-center gap-2 px-3 py-2 text-red-400 hover:text-red-300"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
