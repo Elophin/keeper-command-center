@@ -1,59 +1,81 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 import Navigation from '@/components/Navigation';
 import HeroSection from '@/components/HeroSection';
 import Dashboard from '@/components/Dashboard';
 import EmployeeDashboard from '@/components/EmployeeDashboard';
+import HexaNurseDashboard from '@/components/HexaNurseDashboard';
+import SecurityDashboard from '@/components/SecurityDashboard';
+import AdminDashboard from '@/components/AdminDashboard';
 import AboutSection from '@/components/AboutSection';
 import ContactSection from '@/components/ContactSection';
-import LoginPage from '@/components/LoginPage';
-
-interface User {
-  name: string;
-  role: 'admin' | 'employee';
-  empId?: string;
-}
+import AuthPage from '@/components/AuthPage';
 
 const Index = () => {
+  const { user, profile, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState('home');
-  const [user, setUser] = useState<User | null>(null);
-  const [showLogin, setShowLogin] = useState(false);
 
   const handleNavigate = (page: string) => {
     if (page === 'dashboard' && !user) {
-      setShowLogin(true);
+      setCurrentPage('auth');
       return;
     }
     setCurrentPage(page);
   };
 
-  const handleLogin = (role: 'admin' | 'employee', userData: any) => {
-    setUser({ ...userData, role });
-    setShowLogin(false);
-    setCurrentPage('dashboard');
-  };
-
   const handleLogout = () => {
-    setUser(null);
     setCurrentPage('home');
   };
 
-  if (showLogin) {
-    return <LoginPage onLogin={handleLogin} />;
+  // Redirect authenticated users from auth page
+  useEffect(() => {
+    if (user && currentPage === 'auth') {
+      setCurrentPage('dashboard');
+    }
+  }, [user, currentPage]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-keeper-gradient">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-keeper-blue to-keeper-purple rounded-lg mx-auto mb-4 animate-glow"></div>
+          <p className="text-glow">Loading The Keeper...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user && currentPage === 'auth') {
+    return <AuthPage />;
   }
 
   const renderCurrentPage = () => {
     switch (currentPage) {
       case 'dashboard':
-        if (!user) {
-          setShowLogin(true);
+        if (!user || !profile) {
+          setCurrentPage('auth');
           return null;
         }
-        return user.role === 'admin' ? <Dashboard /> : <EmployeeDashboard />;
+        
+        // Route to appropriate dashboard based on user role
+        switch (profile.role) {
+          case 'admin':
+            return <AdminDashboard />;
+          case 'hexanurse':
+            return <HexaNurseDashboard />;
+          case 'security':
+            return <SecurityDashboard />;
+          case 'employee':
+          default:
+            return <EmployeeDashboard />;
+        }
       case 'about':
         return <AboutSection />;
       case 'contact':
         return <ContactSection />;
+      case 'auth':
+        return <AuthPage />;
       default:
         return <HeroSection onNavigate={handleNavigate} />;
     }
@@ -63,7 +85,11 @@ const Index = () => {
     <div className="min-h-screen bg-keeper-gradient">
       <Navigation 
         onNavigate={handleNavigate} 
-        user={user} 
+        user={profile ? {
+          name: profile.full_name,
+          role: profile.role,
+          empId: profile.employee_id
+        } : null}
         onLogout={handleLogout} 
       />
       {renderCurrentPage()}
