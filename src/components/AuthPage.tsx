@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,13 +7,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, User, Eye, EyeOff, UserPlus } from 'lucide-react';
+import { Shield, User, Eye, EyeOff, UserPlus, Settings } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { createDemoUsers } from '@/utils/setupDemoUsers';
 
 const AuthPage = () => {
   const { signIn, signUp } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [setupLoading, setSetupLoading] = useState(false);
   
   const [loginData, setLoginData] = useState({
     email: '',
@@ -64,6 +66,12 @@ const AuthPage = () => {
     });
     
     setLoading(false);
+  };
+
+  const handleSetupDemoUsers = async () => {
+    setSetupLoading(true);
+    await createDemoUsers();
+    setSetupLoading(false);
   };
 
   const getRoleColor = (role: string) => {
@@ -146,7 +154,19 @@ const AuthPage = () => {
                 </form>
 
                 <div className="mt-6 p-4 bg-background/20 rounded-lg">
-                  <h4 className="text-sm font-semibold mb-2 text-center">Demo Credentials</h4>
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-sm font-semibold">Demo Setup</h4>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSetupDemoUsers}
+                      disabled={setupLoading}
+                      className="text-xs"
+                    >
+                      <Settings className="w-3 h-3 mr-1" />
+                      {setupLoading ? 'Setting up...' : 'Setup Demo Users'}
+                    </Button>
+                  </div>
                   <div className="space-y-2 text-xs">
                     <div className="flex justify-between items-center">
                       <Badge className="bg-red-500/20 text-red-400">Admin</Badge>

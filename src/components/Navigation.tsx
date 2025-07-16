@@ -2,12 +2,12 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Menu, X, User, LogOut, Shield } from 'lucide-react';
+import { Menu, X, Shield, Heart, Users, UserCheck } from 'lucide-react';
 
 interface User {
   name: string;
-  role: 'admin' | 'employee';
-  empId?: string;
+  role: 'employee' | 'admin' | 'hexanurse' | 'security';
+  empId: string;
 }
 
 interface NavigationProps {
@@ -17,133 +17,175 @@ interface NavigationProps {
 }
 
 const Navigation = ({ onNavigate, user, onLogout }: NavigationProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const navItems = [
-    { name: 'Home', id: 'home' },
-    { name: user?.role === 'admin' ? 'Admin Dashboard' : 'Dashboard', id: 'dashboard' },
-    { name: 'About', id: 'about' },
-    { name: 'Contact', id: 'contact' }
-  ];
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case 'admin': return <Shield className="w-4 h-4" />;
+      case 'hexanurse': return <Heart className="w-4 h-4" />;
+      case 'security': return <UserCheck className="w-4 h-4" />;
+      default: return <Users className="w-4 h-4" />;
+    }
+  };
+
+  const getRoleColor = (role: string) => {
+    switch (role) {
+      case 'admin': return 'bg-red-500/20 text-red-400 border-red-500/30';
+      case 'hexanurse': return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'security': return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
+      default: return 'bg-keeper-blue/20 text-keeper-blue border-keeper-blue/30';
+    }
+  };
+
+  const getRoleDisplayName = (role: string) => {
+    switch (role) {
+      case 'hexanurse': return 'HexaNurse';
+      case 'admin': return 'Admin';
+      case 'security': return 'Security';
+      default: return 'Employee';
+    }
+  };
 
   return (
-    <nav className="fixed top-0 w-full z-50 glass-card border-b border-keeper-blue/20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
-              <div className="w-8 h-8 bg-gradient-to-r from-keeper-blue to-keeper-purple rounded-lg mr-3 animate-glow"></div>
-              <span className="text-xl font-bold text-glow">The Keeper</span>
-            </div>
+    <nav className="bg-black/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <div className="flex items-center cursor-pointer" onClick={() => onNavigate('home')}>
+            <div className="w-8 h-8 bg-gradient-to-r from-keeper-blue to-keeper-purple rounded-lg mr-3 animate-glow"></div>
+            <span className="text-xl font-bold text-glow">The Keeper</span>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => onNavigate(item.id)}
-                className="text-foreground hover:text-keeper-blue transition-colors duration-200 font-medium"
-              >
-                {item.name}
-              </button>
-            ))}
-
-            {/* User Info & Logout */}
-            {user && (
-              <div className="flex items-center gap-4 ml-4 pl-4 border-l border-white/10">
-                <div className="flex items-center gap-2">
-                  {user.role === 'admin' ? (
-                    <Shield className="w-4 h-4 text-keeper-purple" />
-                  ) : (
-                    <User className="w-4 h-4 text-keeper-blue" />
-                  )}
-                  <span className="text-sm font-medium">{user.name}</span>
-                  <Badge 
-                    className={
-                      user.role === 'admin' 
-                        ? 'bg-keeper-purple/20 text-keeper-purple border-keeper-purple/30' 
-                        : 'bg-keeper-blue/20 text-keeper-blue border-keeper-blue/30'
-                    }
-                  >
-                    {user.role}
-                  </Badge>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onLogout}
-                  className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+          <div className="hidden md:flex items-center space-x-6">
+            <Button 
+              variant="ghost" 
+              onClick={() => onNavigate('home')}
+              className="text-white/80 hover:text-white hover:bg-white/10"
+            >
+              Home
+            </Button>
+            <Button 
+              variant="ghost" 
+              onClick={() => onNavigate('about')}
+              className="text-white/80 hover:text-white hover:bg-white/10"
+            >
+              About
+            </Button>
+            <Button 
+              variant="ghost" 
+              onClick={() => onNavigate('contact')}
+              className="text-white/80 hover:text-white hover:bg-white/10"
+            >
+              Contact
+            </Button>
+            
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => onNavigate('dashboard')}
+                  className="text-keeper-blue hover:text-white hover:bg-keeper-blue/20"
                 >
-                  <LogOut className="w-4 h-4" />
+                  Dashboard
+                </Button>
+                <div className="flex items-center space-x-2">
+                  <Badge className={`${getRoleColor(user.role)} flex items-center gap-1`}>
+                    {getRoleIcon(user.role)}
+                    {getRoleDisplayName(user.role)}
+                  </Badge>
+                  <span className="text-white/80 text-sm">{user.name}</span>
+                </div>
+                <Button 
+                  variant="outline" 
+                  onClick={onLogout}
+                  className="border-white/20 text-white hover:bg-white/10"
+                >
+                  Logout
                 </Button>
               </div>
+            ) : (
+              <Button 
+                onClick={() => onNavigate('auth')}
+                className="bg-keeper-blue/20 text-keeper-blue hover:bg-keeper-blue/30 border border-keeper-blue/30"
+              >
+                Login
+              </Button>
             )}
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden">
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-foreground"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-white"
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    onNavigate(item.id);
-                    setIsOpen(false);
-                  }}
-                  className="block px-3 py-2 text-base font-medium text-foreground hover:text-keeper-blue transition-colors duration-200"
+        {isMenuOpen && (
+          <div className="md:hidden py-4 space-y-2">
+            <Button 
+              variant="ghost" 
+              onClick={() => { onNavigate('home'); setIsMenuOpen(false); }}
+              className="w-full justify-start text-white/80 hover:text-white hover:bg-white/10"
+            >
+              Home
+            </Button>
+            <Button 
+              variant="ghost" 
+              onClick={() => { onNavigate('about'); setIsMenuOpen(false); }}
+              className="w-full justify-start text-white/80 hover:text-white hover:bg-white/10"
+            >
+              About
+            </Button>
+            <Button 
+              variant="ghost" 
+              onClick={() => { onNavigate('contact'); setIsMenuOpen(false); }}
+              className="w-full justify-start text-white/80 hover:text-white hover:bg-white/10"
+            >
+              Contact
+            </Button>
+            
+            {user ? (
+              <>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => { onNavigate('dashboard'); setIsMenuOpen(false); }}
+                  className="w-full justify-start text-keeper-blue hover:text-white hover:bg-keeper-blue/20"
                 >
-                  {item.name}
-                </button>
-              ))}
-              
-              {/* Mobile User Info & Logout */}
-              {user && (
-                <div className="border-t border-white/10 pt-3 mt-3">
-                  <div className="flex items-center gap-2 px-3 py-2">
-                    {user.role === 'admin' ? (
-                      <Shield className="w-4 h-4 text-keeper-purple" />
-                    ) : (
-                      <User className="w-4 h-4 text-keeper-blue" />
-                    )}
-                    <span className="text-sm font-medium">{user.name}</span>
-                    <Badge 
-                      className={
-                        user.role === 'admin' 
-                          ? 'bg-keeper-purple/20 text-keeper-purple border-keeper-purple/30' 
-                          : 'bg-keeper-blue/20 text-keeper-blue border-keeper-blue/30'
-                      }
-                    >
-                      {user.role}
+                  Dashboard
+                </Button>
+                <div className="flex items-center justify-between px-3 py-2">
+                  <div className="flex items-center space-x-2">
+                    <Badge className={`${getRoleColor(user.role)} flex items-center gap-1`}>
+                      {getRoleIcon(user.role)}
+                      {getRoleDisplayName(user.role)}
                     </Badge>
+                    <span className="text-white/80 text-sm">{user.name}</span>
                   </div>
-                  <button
-                    onClick={() => {
-                      onLogout?.();
-                      setIsOpen(false);
-                    }}
-                    className="flex items-center gap-2 px-3 py-2 text-red-400 hover:text-red-300"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Logout
-                  </button>
                 </div>
-              )}
-            </div>
+                <Button 
+                  variant="outline" 
+                  onClick={() => { onLogout?.(); setIsMenuOpen(false); }}
+                  className="w-full border-white/20 text-white hover:bg-white/10"
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button 
+                onClick={() => { onNavigate('auth'); setIsMenuOpen(false); }}
+                className="w-full bg-keeper-blue/20 text-keeper-blue hover:bg-keeper-blue/30 border border-keeper-blue/30"
+              >
+                Login
+              </Button>
+            )}
           </div>
         )}
       </div>
