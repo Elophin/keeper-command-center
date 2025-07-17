@@ -170,19 +170,19 @@ const AuthPage = () => {
                   <div className="space-y-2 text-xs">
                     <div className="flex justify-between items-center">
                       <Badge className="bg-red-500/20 text-red-400">Admin</Badge>
-                      <span className="font-mono">admin@company.com</span>
+                      <span className="font-mono">admin@demo.com</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <Badge className="bg-green-500/20 text-green-400">HexaNurse</Badge>
-                      <span className="font-mono">nurse@company.com</span>
+                      <span className="font-mono">nurse@demo.com</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <Badge className="bg-orange-500/20 text-orange-400">Security</Badge>
-                      <span className="font-mono">security@company.com</span>
+                      <span className="font-mono">security@demo.com</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <Badge className="bg-keeper-blue/20 text-keeper-blue">Employee</Badge>
-                      <span className="font-mono">john.doe@company.com</span>
+                      <span className="font-mono">employee@demo.com</span>
                     </div>
                     <p className="text-center text-muted-foreground mt-2">Password: password123</p>
                   </div>

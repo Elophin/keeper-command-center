@@ -5,22 +5,21 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface Profile {
-  id: string;
+  id?: string;
   user_id: string;
   email: string;
   full_name: string;
   employee_id: string;
   role: 'employee' | 'admin' | 'hexanurse' | 'security';
-  department?: string;
+  department: string;
   phone?: string;
   emergency_contact?: string;
-  floor_number?: number;
-  office_location?: string;
-  privacy_settings: {
-    share_vitals: boolean;
-    share_location: boolean;
-  };
-  is_active: boolean;
+  floor_number: number;
+  office_location: string;
+  privacy_settings?: any; // Handling JSONB type from database
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface AuthContextType {

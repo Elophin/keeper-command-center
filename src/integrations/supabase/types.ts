@@ -14,7 +14,243 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      access_requests: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string | null
+          id: string
+          purpose: string
+          requested_area: string
+          requested_for: string
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          id?: string
+          purpose: string
+          requested_area: string
+          requested_for: string
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          id?: string
+          purpose?: string
+          requested_area?: string
+          requested_for?: string
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      alerts: {
+        Row: {
+          assigned_nurse_id: string | null
+          created_at: string | null
+          id: string
+          is_resolved: boolean | null
+          location: string | null
+          message: string
+          resolved_at: string | null
+          severity: Database["public"]["Enums"]["alert_severity"]
+          user_id: string
+          vitals_data: Json | null
+        }
+        Insert: {
+          assigned_nurse_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_resolved?: boolean | null
+          location?: string | null
+          message: string
+          resolved_at?: string | null
+          severity: Database["public"]["Enums"]["alert_severity"]
+          user_id: string
+          vitals_data?: Json | null
+        }
+        Update: {
+          assigned_nurse_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_resolved?: boolean | null
+          location?: string | null
+          message?: string
+          resolved_at?: string | null
+          severity?: Database["public"]["Enums"]["alert_severity"]
+          user_id?: string
+          vitals_data?: Json | null
+        }
+        Relationships: []
+      }
+      incident_logs: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: string
+          incident_type: string
+          location: string | null
+          reported_by: string
+          resolved_at: string | null
+          severity: Database["public"]["Enums"]["alert_severity"]
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: string
+          incident_type: string
+          location?: string | null
+          reported_by: string
+          resolved_at?: string | null
+          severity: Database["public"]["Enums"]["alert_severity"]
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: string
+          incident_type?: string
+          location?: string | null
+          reported_by?: string
+          resolved_at?: string | null
+          severity?: Database["public"]["Enums"]["alert_severity"]
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      locations: {
+        Row: {
+          coordinates: Json | null
+          created_at: string | null
+          floor_number: number
+          id: string
+          last_seen: string | null
+          room_number: string | null
+          user_id: string
+        }
+        Insert: {
+          coordinates?: Json | null
+          created_at?: string | null
+          floor_number: number
+          id?: string
+          last_seen?: string | null
+          room_number?: string | null
+          user_id: string
+        }
+        Update: {
+          coordinates?: Json | null
+          created_at?: string | null
+          floor_number?: number
+          id?: string
+          last_seen?: string | null
+          room_number?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          department: string
+          email: string
+          emergency_contact: string | null
+          employee_id: string
+          floor_number: number
+          full_name: string
+          id: string
+          is_active: boolean | null
+          office_location: string
+          phone: string | null
+          privacy_settings: Json | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          department: string
+          email: string
+          emergency_contact?: string | null
+          employee_id: string
+          floor_number: number
+          full_name: string
+          id?: string
+          is_active?: boolean | null
+          office_location: string
+          phone?: string | null
+          privacy_settings?: Json | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          department?: string
+          email?: string
+          emergency_contact?: string | null
+          employee_id?: string
+          floor_number?: number
+          full_name?: string
+          id?: string
+          is_active?: boolean | null
+          office_location?: string
+          phone?: string | null
+          privacy_settings?: Json | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vitals: {
+        Row: {
+          blood_pressure_diastolic: number | null
+          blood_pressure_systolic: number | null
+          created_at: string | null
+          heart_rate: number | null
+          id: string
+          oxygen_saturation: number | null
+          recorded_at: string | null
+          stress_level: number | null
+          temperature: number | null
+          user_id: string
+        }
+        Insert: {
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          created_at?: string | null
+          heart_rate?: number | null
+          id?: string
+          oxygen_saturation?: number | null
+          recorded_at?: string | null
+          stress_level?: number | null
+          temperature?: number | null
+          user_id: string
+        }
+        Update: {
+          blood_pressure_diastolic?: number | null
+          blood_pressure_systolic?: number | null
+          created_at?: string | null
+          heart_rate?: number | null
+          id?: string
+          oxygen_saturation?: number | null
+          recorded_at?: string | null
+          stress_level?: number | null
+          temperature?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +259,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      alert_severity: "mild" | "moderate" | "emergency"
+      user_role: "admin" | "employee" | "hexanurse" | "security"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +387,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      alert_severity: ["mild", "moderate", "emergency"],
+      user_role: ["admin", "employee", "hexanurse", "security"],
+    },
   },
 } as const

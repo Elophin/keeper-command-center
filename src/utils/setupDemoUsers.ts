@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 export const createDemoUsers = async () => {
   const demoUsers = [
     {
-      email: 'admin@company.com',
+      email: 'admin@demo.com',
       password: 'password123',
       userData: {
         full_name: 'System Administrator',
@@ -16,7 +16,7 @@ export const createDemoUsers = async () => {
       }
     },
     {
-      email: 'nurse@company.com',
+      email: 'nurse@demo.com',
       password: 'password123',
       userData: {
         full_name: 'Sarah Johnson',
@@ -28,7 +28,7 @@ export const createDemoUsers = async () => {
       }
     },
     {
-      email: 'security@company.com',
+      email: 'security@demo.com',
       password: 'password123',
       userData: {
         full_name: 'Mike Wilson',
@@ -40,7 +40,7 @@ export const createDemoUsers = async () => {
       }
     },
     {
-      email: 'john.doe@company.com',
+      email: 'employee@demo.com',
       password: 'password123',
       userData: {
         full_name: 'John Doe',
