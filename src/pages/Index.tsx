@@ -28,22 +28,22 @@ const Index = () => {
     setCurrentPage('home');
   };
 
-  // Redirect authenticated users from auth page
+  // Auto-navigate to dashboard when user logs in
   useEffect(() => {
-    if (user && currentPage === 'auth') {
+    if (user && profile && currentPage === 'auth') {
       setCurrentPage('dashboard');
     }
-  }, [user, currentPage]);
+  }, [user, profile, currentPage]);
+
+  // Auto-navigate to auth when user logs out or no profile
+  useEffect(() => {
+    if (currentPage === 'dashboard' && (!user || !profile)) {
+      setCurrentPage('auth');
+    }
+  }, [user, profile, currentPage]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-keeper-gradient">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-keeper-blue to-keeper-purple rounded-lg mx-auto mb-4 animate-glow"></div>
-          <p className="text-glow">Loading The Keeper...</p>
-        </div>
-      </div>
-    );
+    return null; // AuthProvider handles loading state now
   }
 
   if (!user && currentPage === 'auth') {
@@ -51,18 +51,19 @@ const Index = () => {
   }
 
   const renderCurrentPage = () => {
-    console.log('renderCurrentPage - currentPage:', currentPage, 'user:', !!user, 'profile:', !!profile);
-    
     switch (currentPage) {
       case 'dashboard':
-        if (!user || !profile) {
-          console.log('No user or profile, redirecting to auth. User:', !!user, 'Profile:', !!profile);
-          setCurrentPage('auth');
-          return null;
+        if (!profile?.role) {
+          return (
+            <div className="min-h-screen flex items-center justify-center bg-keeper-gradient">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-keeper-blue to-keeper-purple rounded-lg mx-auto mb-4 animate-glow"></div>
+                <p className="text-glow">Setting up your dashboard...</p>
+              </div>
+            </div>
+          );
         }
         
-        console.log('Routing to dashboard for role:', profile.role);
-        // Route to appropriate dashboard based on user role
         switch (profile.role) {
           case 'admin':
             return <AdminDashboard />;
@@ -80,6 +81,7 @@ const Index = () => {
         return <ContactSection />;
       case 'auth':
         return <AuthPage />;
+      case 'home':
       default:
         return <HeroSection onNavigate={handleNavigate} />;
     }

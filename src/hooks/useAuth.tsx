@@ -16,7 +16,7 @@ interface Profile {
   emergency_contact?: string;
   floor_number: number;
   office_location: string;
-  privacy_settings?: any; // Handling JSONB type from database
+  privacy_settings?: any;
   is_active?: boolean;
   created_at?: string;
   updated_at?: string;
@@ -63,37 +63,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state change:', event, 'Session:', !!session);
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          setTimeout(async () => {
-            console.log('Fetching profile for user:', session.user.id);
-            const profileData = await fetchProfile(session.user.id);
-            console.log('Profile fetched:', profileData);
-            setProfile(profileData);
-          }, 0);
-        } else {
-          setProfile(null);
-        }
-        
-        setLoading(false);
-      }
-    );
+    const initAuth = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setSession(session);
+        setUser(session.user);
+        const profileData = await fetchProfile(session.user.id);
+        setProfile(profileData);
+      }
+      setLoading(false);
+    };
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state change:', event);
       setSession(session);
       setUser(session?.user ?? null);
-      
       if (session?.user) {
-        fetchProfile(session.user.id).then(setProfile);
+        const profileData = await fetchProfile(session.user.id);
+        setProfile(profileData);
+      } else {
+        setProfile(null);
       }
-      
-      setLoading(false);
     });
+
+    initAuth();
 
     return () => subscription.unsubscribe();
   }, []);
@@ -225,7 +223,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {loading ? (
+        <div className="min-h-screen flex items-center justify-center bg-keeper-gradient">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-keeper-blue to-keeper-purple rounded-lg mx-auto mb-4 animate-glow"></div>
+            <p className="text-glow">Loading The Keeper...</p>
+          </div>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };
