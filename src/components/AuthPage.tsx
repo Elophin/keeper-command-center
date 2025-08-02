@@ -40,7 +40,15 @@ const AuthPage = () => {
     e.preventDefault();
     setLoading(true);
     
-    await signIn(loginData.email, loginData.password);
+    console.log('Attempting login with:', loginData.email);
+    const { error } = await signIn(loginData.email, loginData.password);
+    
+    if (error) {
+      console.error('Login error:', error);
+    } else {
+      console.log('Login successful!');
+    }
+    
     setLoading(false);
   };
 
