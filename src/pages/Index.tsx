@@ -51,13 +51,17 @@ const Index = () => {
   }
 
   const renderCurrentPage = () => {
+    console.log('renderCurrentPage - currentPage:', currentPage, 'user:', !!user, 'profile:', !!profile);
+    
     switch (currentPage) {
       case 'dashboard':
         if (!user || !profile) {
+          console.log('No user or profile, redirecting to auth. User:', !!user, 'Profile:', !!profile);
           setCurrentPage('auth');
           return null;
         }
         
+        console.log('Routing to dashboard for role:', profile.role);
         // Route to appropriate dashboard based on user role
         switch (profile.role) {
           case 'admin':
