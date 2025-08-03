@@ -84,13 +84,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state change:', event);
       setSession(session);
       setUser(session?.user ?? null);
+      
       if (session?.user) {
-        const profileData = await fetchProfile(session.user.id);
-        setProfile(profileData);
+        // Use setTimeout to avoid blocking the auth state change
+        setTimeout(async () => {
+          try {
+            const profileData = await fetchProfile(session.user.id);
+            setProfile(profileData);
+            console.log('Profile set in auth state change:', profileData);
+          } catch (error) {
+            console.error('Error fetching profile in auth state change:', error);
+            setProfile(null);
+          }
+        }, 0);
       } else {
         setProfile(null);
       }
