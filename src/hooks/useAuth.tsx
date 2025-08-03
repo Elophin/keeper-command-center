@@ -44,6 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchProfile = async (userId: string) => {
     try {
+      console.log('Fetching profile for user ID:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -55,6 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return null;
       }
 
+      console.log('Profile fetched:', data);
       return data;
     } catch (error) {
       console.error('Error in fetchProfile:', error);
@@ -64,16 +66,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const initAuth = async () => {
+      console.log('Initializing auth...');
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
+      console.log('Session found:', !!session, session?.user?.email);
       if (session) {
         setSession(session);
         setUser(session.user);
         const profileData = await fetchProfile(session.user.id);
         setProfile(profileData);
       }
+      console.log('Setting loading to false');
       setLoading(false);
     };
 
