@@ -3,6 +3,7 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { getRoleFromEmail, getEmployeeIdFromEmail, getDepartmentFromRole, getOfficeLocationFromRole, UserRole } from '@/utils/roleUtils';
 
 interface Profile {
   id?: string;
@@ -113,7 +114,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -124,6 +125,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           description: error.message,
           variant: "destructive",
         });
+        return { error };
+      }
+
+      // Check if user profile exists and update role if needed
+      if (authData.user) {
+        const existingProfile = await fetchProfile(authData.user.id);
+        
+        if (existingProfile) {
+          // Check if role matches email domain and update if needed
+          const expectedRole = getRoleFromEmail(email);
+          if (existingProfile.role !== expectedRole) {
+            console.log(`Updating role from ${existingProfile.role} to ${expectedRole} for ${email}`);
+            await supabase
+              .from('profiles')
+              .update({ 
+                role: expectedRole,
+                department: getDepartmentFromRole(expectedRole),
+                office_location: getOfficeLocationFromRole(expectedRole)
+              })
+              .eq('user_id', authData.user.id);
+          }
+        }
       }
 
       return { error };
@@ -153,19 +176,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       if (authData.user) {
+        // Automatically determine role and other details from email
+        const autoRole = getRoleFromEmail(email);
+        const autoEmployeeId = getEmployeeIdFromEmail(email);
+        const autoDepartment = getDepartmentFromRole(autoRole);
+        const autoOfficeLocation = getOfficeLocationFromRole(autoRole);
+        
         const { error: profileError } = await supabase
           .from('profiles')
           .insert([{
             user_id: authData.user.id,
             email,
             full_name: userData.full_name || '',
-            employee_id: userData.employee_id || '',
-            role: userData.role || 'employee',
-            department: userData.department,
+            employee_id: userData.employee_id || autoEmployeeId,
+            role: autoRole,
+            department: userData.department || autoDepartment,
             phone: userData.phone,
             emergency_contact: userData.emergency_contact,
-            floor_number: userData.floor_number,
-            office_location: userData.office_location,
+            floor_number: userData.floor_number || 1,
+            office_location: userData.office_location || autoOfficeLocation,
           }]);
 
         if (profileError) {
