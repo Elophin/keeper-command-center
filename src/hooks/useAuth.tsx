@@ -218,6 +218,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         description: error.message,
         variant: "destructive",
       });
+    } else {
+      // Clear local state
+      setUser(null);
+      setSession(null);
+      setProfile(null);
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
+      });
     }
   };
 
