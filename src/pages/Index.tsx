@@ -37,6 +37,14 @@ const Index = () => {
   const handleNavigate = (page: string) => {
     if (page === 'login' || page === 'auth') {
       navigate('/login');
+    } else if (page === 'dashboard') {
+      // If user is already authenticated, redirect to their dashboard
+      if (user && profile) {
+        navigate(`/${profile.role}-dashboard`, { replace: true });
+      } else {
+        // If not authenticated, redirect to login
+        navigate('/login');
+      }
     }
     // For other navigation, we can implement section scrolling later
   };
