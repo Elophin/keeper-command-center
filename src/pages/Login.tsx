@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, EyeOff, Shield, Heart, UserCheck, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { createDemoUsers } from '@/utils/setupDemoUsers';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -131,6 +132,31 @@ const Login = () => {
     setActiveTab('login');
   };
 
+  const handleSetupDemoUsers = async () => {
+    setLoading(true);
+    toast({
+      title: "Setting up demo users...",
+      description: "This may take a moment.",
+    });
+
+    try {
+      await createDemoUsers();
+      toast({
+        title: "Demo Users Created",
+        description: "You can now log in with any of the demo accounts using password 'demo123'.",
+      });
+    } catch (error) {
+      console.error('Error setting up demo users:', error);
+      toast({
+        title: "Setup Failed",
+        description: "Failed to create demo users. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-keeper-gradient flex items-center justify-center p-4">
       <div className="w-full max-w-4xl grid lg:grid-cols-2 gap-8 items-center">
@@ -165,6 +191,14 @@ const Login = () => {
                 </button>
               ))}
             </div>
+            <Button 
+              onClick={handleSetupDemoUsers}
+              disabled={loading}
+              variant="outline"
+              className="w-full mt-4"
+            >
+              {loading ? 'Setting up...' : 'Setup Demo Users'}
+            </Button>
           </div>
         </div>
 

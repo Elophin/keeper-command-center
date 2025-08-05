@@ -1,54 +1,47 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { getRoleFromEmail, getDepartmentFromRole, getOfficeLocationFromRole } from './roleUtils';
 
 export const createDemoUsers = async () => {
   const demoUsers = [
     {
-      email: 'admin@demo.com',
-      password: 'password123',
+      email: 'admin@admin.hexaware.com',
+      password: 'demo123',
       userData: {
         full_name: 'System Administrator',
+        employee_id: 'ADM001',
+        phone: '+1-555-0001',
+        emergency_contact: '+1-555-9001'
+      }
+    },
+    {
+      email: 'employee@employee.hexaware.com',
+      password: 'demo123',
+      userData: {
+        full_name: 'John Employee',
         employee_id: 'EMP001',
-        role: 'admin' as const,
-        department: 'IT',
-        floor_number: 1,
-        office_location: 'A-101'
+        phone: '+1-555-0002',
+        emergency_contact: '+1-555-9002'
       }
     },
     {
-      email: 'nurse@demo.com',
-      password: 'password123',
+      email: 'nurse@nurse.hexaware.com',
+      password: 'demo123',
       userData: {
-        full_name: 'Sarah Johnson',
-        employee_id: 'EMP002',
-        role: 'hexanurse' as const,
-        department: 'Health',
-        floor_number: 2,
-        office_location: 'B-201'
+        full_name: 'Medical Nurse',
+        employee_id: 'NUR001',
+        phone: '+1-555-0003',
+        emergency_contact: '+1-555-9003'
       }
     },
     {
-      email: 'security@demo.com',
-      password: 'password123',
+      email: 'security@security.hexaware.com',
+      password: 'demo123',
       userData: {
-        full_name: 'Mike Wilson',
-        employee_id: 'EMP003',
-        role: 'security' as const,
-        department: 'Security',
-        floor_number: 1,
-        office_location: 'S-101'
-      }
-    },
-    {
-      email: 'employee@demo.com',
-      password: 'password123',
-      userData: {
-        full_name: 'John Doe',
-        employee_id: 'EMP004',
-        role: 'employee' as const,
-        department: 'Engineering',
-        floor_number: 3,
-        office_location: 'C-301'
+        full_name: 'Security Officer',
+        employee_id: 'SEC001',
+        phone: '+1-555-0004',
+        emergency_contact: '+1-555-9004'
       }
     }
   ];
@@ -73,6 +66,10 @@ export const createDemoUsers = async () => {
 
       // If user was created, create their profile
       if (authData.user) {
+        const role = getRoleFromEmail(user.email);
+        const department = getDepartmentFromRole(role);
+        const officeLocation = getOfficeLocationFromRole(role);
+        
         const { error: profileError } = await supabase
           .from('profiles')
           .upsert([{
@@ -80,10 +77,12 @@ export const createDemoUsers = async () => {
             email: user.email,
             full_name: user.userData.full_name,
             employee_id: user.userData.employee_id,
-            role: user.userData.role,
-            department: user.userData.department,
-            floor_number: user.userData.floor_number,
-            office_location: user.userData.office_location,
+            role: role,
+            department: department,
+            phone: user.userData.phone,
+            emergency_contact: user.userData.emergency_contact,
+            floor_number: 1,
+            office_location: officeLocation,
             privacy_settings: { share_vitals: true, share_location: true },
             is_active: true
           }]);
