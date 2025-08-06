@@ -98,28 +98,28 @@ const Login = () => {
   const demoAccounts = [
     {
       role: 'Admin',
-      email: 'admin@admin.hexaware.com',
+      email: 'admin@hexaware.com',
       icon: Shield,
       color: 'text-red-500',
       description: 'Full system access'
     },
     {
       role: 'HexaNurse',
-      email: 'nurse@nurse.hexaware.com',
+      email: 'nurse@hexaware.com',
       icon: Heart,
       color: 'text-green-500',
       description: 'Medical monitoring'
     },
     {
       role: 'Security',
-      email: 'security@security.hexaware.com',
+      email: 'security@hexaware.com',
       icon: UserCheck,
       color: 'text-blue-500',
       description: 'Security operations'
     },
     {
       role: 'Employee',
-      email: 'employee@employee.hexaware.com',
+      email: 'employee@hexaware.com',
       icon: Users,
       color: 'text-purple-500',
       description: 'Personal dashboard'

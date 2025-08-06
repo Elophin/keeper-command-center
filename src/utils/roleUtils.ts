@@ -6,19 +6,19 @@ export type UserRole = 'admin' | 'employee' | 'hexanurse' | 'security';
 export const getRoleFromEmail = (email: string): UserRole => {
   const emailLower = email.toLowerCase();
   
-  if (emailLower.endsWith('@admin.hexaware.com')) {
+  if (emailLower === 'admin@hexaware.com') {
     return 'admin';
   }
   
-  if (emailLower.endsWith('@nurse.hexaware.com')) {
+  if (emailLower === 'nurse@hexaware.com') {
     return 'hexanurse';
   }
   
-  if (emailLower.endsWith('@security.hexaware.com')) {
+  if (emailLower === 'security@hexaware.com') {
     return 'security';
   }
   
-  if (emailLower.endsWith('@employee.hexaware.com')) {
+  if (emailLower === 'employee@hexaware.com') {
     return 'employee';
   }
   

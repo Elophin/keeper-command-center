@@ -5,7 +5,7 @@ import { getRoleFromEmail, getDepartmentFromRole, getOfficeLocationFromRole } fr
 export const createDemoUsers = async () => {
   const demoUsers = [
     {
-      email: 'admin@admin.hexaware.com',
+      email: 'admin@hexaware.com',
       password: 'demo123',
       userData: {
         full_name: 'System Administrator',
@@ -15,7 +15,7 @@ export const createDemoUsers = async () => {
       }
     },
     {
-      email: 'employee@employee.hexaware.com',
+      email: 'employee@hexaware.com',
       password: 'demo123',
       userData: {
         full_name: 'John Employee',
@@ -25,7 +25,7 @@ export const createDemoUsers = async () => {
       }
     },
     {
-      email: 'nurse@nurse.hexaware.com',
+      email: 'nurse@hexaware.com',
       password: 'demo123',
       userData: {
         full_name: 'Medical Nurse',
@@ -35,7 +35,7 @@ export const createDemoUsers = async () => {
       }
     },
     {
-      email: 'security@security.hexaware.com',
+      email: 'security@hexaware.com',
       password: 'demo123',
       userData: {
         full_name: 'Security Officer',
