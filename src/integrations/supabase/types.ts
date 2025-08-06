@@ -260,6 +260,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      setup_demo_users: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       alert_severity: "mild" | "moderate" | "emergency"
